@@ -1,19 +1,64 @@
+def COLOR_MAP = [
+    'SUCCESS': 'good',
+    'FAILURE': 'danger',
+]
 pipeline {
     agent any
     tools{
-        maven 'maven_3_5_0'
+        maven "MVN"
+        jdk "JDK11"
     }
-    stages{
-        stage('Build Maven'){
-            steps{
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Java-Techie-jt/devops-automation']]])
-                sh 'mvn clean install'
+
+    stages {
+        stage('Fetch code from github') {
+            steps {
+                git branch: 'main', credentialsId: 'github', url: ' git@github.com:akashzakde/simple-java-app.git'
             }
         }
-        stage('Build docker image'){
+
+        stage('Static Code Analysis'){
+            steps{
+                withSonarQubeEnv(credentialsId: 'sonar-login',installationName: 'sonar-server') {
+               sh 'mvn sonar:sonar'
+             }
+          }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                    timeout(time: 1, unit: 'HOURS'){
+                    waitForQualityGate abortPipeline: true
+                    }
+                }
+
+        post {
+        success {
+            echo 'Static code analysis and quality gate passed.'
+        }
+        failure {
+            echo 'Static code analysis or quality gate failed. Please investigate and take appropriate action.'
+           }
+         }
+       }
+        stage('Build Code'){
+            steps{
+                sh 'mvn -s settings.xml clean -DskipTests package'
+            }
+        }
+        stage('Test Code'){
+            steps{
+                sh 'mvn  -s settings.xml test'
+            }
+        }
+        stage('Upload Artifact On Nexus Repo'){
+            steps{
+                sh 'mvn -s settings.xml deploy'
+            }
+        }
+         stage('Build docker image'){
             steps{
                 script{
-                    sh 'docker build -t javatechie/devops-integration .'
+                    sh 'docker build -t akashz/myapp:latest .'
                 }
             }
         }
@@ -21,19 +66,21 @@ pipeline {
             steps{
                 script{
                    withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]) {
-                   sh 'docker login -u javatechie -p ${dockerhubpwd}'
+                   sh 'docker login -u akashz -p ${dockerhubpwd}'
+                        }
+                   sh 'docker push akashz/myapp:latest'
+                }
+            }
+        }
 
-}
-                   sh 'docker push javatechie/devops-integration'
-                }
-            }
-        }
-        stage('Deploy to k8s'){
-            steps{
-                script{
-                    kubernetesDeploy (configs: 'deploymentservice.yaml',kubeconfigId: 'k8sconfigpwd')
-                }
-            }
-        }
     }
+       post{
+          always {
+              echo 'Slack Notifications'
+              slackSend channel: '#jenkinscicd',
+                  color: COLOR_MAP[currentBuild.currentResult],
+                  message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} \n More info at: ${env.BUILD_URL}"
+             }
+          }
+
 }
