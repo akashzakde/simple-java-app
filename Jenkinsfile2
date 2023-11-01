@@ -55,6 +55,24 @@ pipeline {
                 sh 'mvn -s settings.xml deploy'
             }
         }
+         stage('Build docker image'){
+            steps{
+                script{
+                    sh 'docker build -t akashz/myapp:latest .'
+                }
+            }
+        }
+        stage('Push image to Hub'){
+            steps{
+                script{
+                   withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]) {
+                   sh 'docker login -u akashz -p ${dockerhubpwd}'
+                        }
+                   sh 'docker push akashz/myapp:latest'
+                }
+            }
+        }
+
     }
        post{
           always {
