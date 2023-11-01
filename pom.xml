@@ -60,4 +60,14 @@
 		<finalName>devops-integration</finalName>
 	</build>
 
+	 <distributionManagement>
+        	<repository>
+            	<id>nexus</id>
+            	<url>http://172.31.32.150:8081/repository/nexus-release-repo/</url>
+        	</repository>
+        	<snapshotRepository>
+            	<id>nexus</id>
+            	<url>http://172.31.32.150:8081/repository/nexus-snapshot-repo/</url>
+        	</snapshotRepository>
+    	 </distributionManagement>
 </project>
