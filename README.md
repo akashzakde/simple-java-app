@@ -1,1 +1,1 @@
-# devops-automation
+# Simple Java Application
