@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Fetch code from github') {
             steps {
-                git branch: 'main', credentialsId: 'github', url: 'git@github.com:akashzakde/ci-jenkins.git'
+                git branch: 'main', credentialsId: 'github', url: ' git@github.com:akashzakde/simple-java-app.git'
             }
         }
 
