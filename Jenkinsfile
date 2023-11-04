@@ -65,8 +65,8 @@ pipeline {
         stage('Push image to Hub'){
             steps{
                 script{
-                   withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]) {
-                   sh 'docker login -u akashz -p ${dockerhubpwd}'
+                   withCredentials([string(credentialsId: 'dockerhub-password', variable: 'dockerhub-pwd')]) {
+                   sh 'docker login ${dockerhub-pwd}
                         }
                    sh 'docker push akashz/myapp:latest'
                 }
