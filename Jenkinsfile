@@ -66,7 +66,7 @@ pipeline {
             steps{
                 script{
                    withCredentials([string(credentialsId: 'dockerhub-password', variable: 'dockerhub-pwd')]) {
-                   sh 'docker login ${dockerhub-pwd}
+                   sh 'docker login ${dockerhub-pwd}'
                         }
                    sh 'docker push akashz/myapp:latest'
                 }
