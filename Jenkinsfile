@@ -58,18 +58,15 @@ pipeline {
          stage('Build docker image'){
             steps{
                 script{
-                    sh 'docker build -t akashz/myapp:latest .'
+                    sh 'docker build -t akashz/springbootapp:latest .'
                 }
             }
         }
         stage('Push image to Hub'){
             steps{
-                script{
-                   withCredentials([string(credentialsId: 'dockerhub-password', variable: 'dockerhub-pwd')]) {
-                   sh 'docker login ${dockerhub-pwd}'
-                        }
-                   sh 'docker push akashz/myapp:latest'
-                }
+               withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+        	sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+            sh 'docker push akashz/springbootapp:latest'
             }
         }
 
