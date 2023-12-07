@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.javatechie</groupId>
-	<artifactId>devops-integration</artifactId>
+	<artifactId>devops-code</artifactId>
 	<version>0.0.1-RELEASE</version>
-	<name>devops-integration</name>
+	<name>devops-integration-code</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>1.8</java.version>
@@ -57,7 +57,6 @@
 				<artifactId>git-commit-id-plugin</artifactId>
 			</plugin>
 		</plugins>
-		<finalName>devops-integration</finalName>
 	</build>
 
 	 <distributionManagement>
