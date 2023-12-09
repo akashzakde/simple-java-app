@@ -1,21 +1,27 @@
-package com.javatechie;
+public class Calculator {
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+    private double num1;
+    private double num2;
+    private char operator;
 
-@SpringBootApplication
-@RestController
-public class DevopsIntegrationApplication {
+    public Calculator(double num1, double num2, char operator) {
+        this.num1 = num1;
+        this.num2 = num2;
+        this.operator = operator;
+    }
 
-	@GetMapping
-	public String message(){
-		return "Hello World ! How are you ?";
-	}
-
-	public static void main(String[] args) {
-		SpringApplication.run(DevopsIntegrationApplication.class, args);
-	}
-
+    public double calculate() {
+        switch (operator) {
+            case '+':
+                return num1 + num2;
+            case '-':
+                return num1 - num2;
+            case '*':
+                return num1 * num2;
+            case '/':
+                return num1 / num2;
+            default:
+                return Double.NaN;
+        }
+    }
 }
